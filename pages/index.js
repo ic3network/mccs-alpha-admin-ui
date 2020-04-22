@@ -1,16 +1,17 @@
 import Link from 'next/link'
+import Layout from '../components/Layout'
+import UserInfo from '../components/UserInfo'
 
-export default function Index() {
+const Index = () => {
     return (
-        <div>
-            <h1>MCCS Admin</h1>
-            <Link href="/login">
-                <a title="Login">Login</a>
-            </Link>
-            {' - '}
+        <Layout title="Dashboard">
+            <h1>Dashboard</h1>
             <Link href="/categories">
-                <a title="Categories">Categories</a>
+                <a title="Categories"><h4>Categories</h4></a>
             </Link>
-        </div>
+            <UserInfo />
+        </Layout>
     )
 }
+
+export default Index
