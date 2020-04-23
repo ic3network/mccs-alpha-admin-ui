@@ -1,55 +1,52 @@
-import React from 'react'
-import App from 'next/app'
+import React, { useState, useEffect } from 'react'
 import Router from 'next/router'
 import UserContext from '../components/UserContext'
 import loginAdmin from '../modules/login'
 
-export default class MyApp extends App {
-    state = {
-        jwt: null
-    }
+function MyApp(props) {
+    const [jwt, setJwt] = useState(null)
 
-    componentDidMount = () => {
+    useEffect(() => {
         const jwt = localStorage.getItem('jwt')
         if (jwt) {
-            this.setState({
+            setJwt({
                 jwt
             })
         } else {
             Router.push('/login')
         }
-    }
+    }, [])
 
-    login = (email, password) => {
+    const login = (email, password) => {
         loginAdmin(email, password, 'http://localhost:8080/api/v1/admin/login').then(jwt => {
             localStorage.setItem('jwt', JSON.stringify(jwt.data.token))
-            this.setState(
-                {
-                    jwt: jwt.data.token
-                },
+            setJwt(
+                jwt.data.token
+            )
+        }).
+            then(
                 () => {
                     Router.push('/')
                 }
             )
-        })
     }
 
-    logout = () => {
+    const logout = () => {
         // TODO - add logoutAdmin
         localStorage.removeItem('jwt')
-        this.setState({
+        setJwt({
             jwt: null
         })
         Router.push('/login')
     }
 
-    render() {
-        const { Component, pageProps } = this.props
+    const { Component, pageProps } = props
 
-        return (
-            <UserContext.Provider value={{ jwt: this.state.jwt, login: this.login, logout: this.logout }}>
-                <Component {...pageProps} />
-            </UserContext.Provider>
-        )
-    }
+    return (
+        <UserContext.Provider value={{ jwt: jwt, login: login, logout: logout }}>
+            <Component {...pageProps} />
+        </UserContext.Provider>
+    )
 }
+
+export default MyApp
